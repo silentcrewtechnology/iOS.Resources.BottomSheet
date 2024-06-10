@@ -1,0 +1,78 @@
+{
+  "originHash" : "b6e57ce3988d7b7d88de196d6c0f7e94eb4b564863d201f3a70a1f5cdb6498ed",
+  "pins" : [
+    {
+      "identity" : "ios-architecture-table",
+      "kind" : "remoteSourceControl",
+      "location" : "https://gitlab.akbars.tech/abo/ios-architecture-table",
+      "state" : {
+        "revision" : "5a27f9eaec7411e39ad06ff0458455f22ac95e6d",
+        "version" : "1.2.0"
+      }
+    },
+    {
+      "identity" : "ios-resources-colors",
+      "kind" : "remoteSourceControl",
+      "location" : "https://gitlab.akbars.tech/abo/ios-resources-colors.git",
+      "state" : {
+        "revision" : "a5575917f6db4ed88533fa8ed13ff2f36ba6a09c",
+        "version" : "0.0.3"
+      }
+    },
+    {
+      "identity" : "ios-resources-fonts",
+      "kind" : "remoteSourceControl",
+      "location" : "https://gitlab.akbars.tech/abo/ios-resources-fonts.git",
+      "state" : {
+        "revision" : "ba60010f93fa82ff25fa3509ed1a132833a1d590",
+        "version" : "0.0.1"
+      }
+    },
+    {
+      "identity" : "ios-resources-icons",
+      "kind" : "remoteSourceControl",
+      "location" : "https://gitlab.akbars.tech/abo/ios-resources-icons.git",
+      "state" : {
+        "revision" : "897bdd766c4136e337ae2305525f91d81b70ec23",
+        "version" : "0.0.3"
+      }
+    },
+    {
+      "identity" : "ios-resources-ui-components",
+      "kind" : "remoteSourceControl",
+      "location" : "https://gitlab.akbars.tech/abo/ios-resources-ui-components.git",
+      "state" : {
+        "revision" : "1e2b443793459406852ac09227d21f188ce18f67",
+        "version" : "3.4.0"
+      }
+    },
+    {
+      "identity" : "ios.architecture",
+      "kind" : "remoteSourceControl",
+      "location" : "https://gitlab.akbars.tech/abo/ios.architecture",
+      "state" : {
+        "revision" : "7658812fc6d295c5207c24a0d853e53606d7cde8",
+        "version" : "0.0.6"
+      }
+    },
+    {
+      "identity" : "ios.designsystem",
+      "kind" : "remoteSourceControl",
+      "location" : "https://gitlab.akbars.tech/abo/ios.designsystem",
+      "state" : {
+        "revision" : "9564e9ce7dea175507ec60b79a174a757ad3d40b",
+        "version" : "3.3.0"
+      }
+    },
+    {
+      "identity" : "snapkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SnapKit/SnapKit.git",
+      "state" : {
+        "revision" : "f222cbdf325885926566172f6f5f06af95473158",
+        "version" : "5.6.0"
+      }
+    }
+  ],
+  "version" : 3
+}
