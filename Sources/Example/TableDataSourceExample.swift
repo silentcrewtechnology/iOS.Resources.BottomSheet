@@ -1,12 +1,17 @@
 import UIKit
 import DesignSystem
 import Components
+// TODO: убрать зависимость от Services, когда вынесем Example
+import Services
 
 private class TableDataSourceExample: NSObject, UITableViewDataSource {
     
+    private var cardNumberFormatter = CardNumberFormatter()
+    private var cardExpirationDateFormatter = CardExpirationDateFormatter()
+    
     func tableView(_ tableView: UITableView,
                    numberOfRowsInSection section: Int) -> Int {
-        return 5 // для тестирования меняем количество ячеек
+        return 8 // для тестирования меняем количество ячеек
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -18,9 +23,9 @@ private class TableDataSourceExample: NSObject, UITableViewDataSource {
         case 0:
             return createTitleRow(tableView, indexPath: indexPath)
         case 1:
-            return createImageWithTitleRow(tableView, indexPath: indexPath)
+            return return createInputCardRow(tableView, indexPath: indexPath)
         case 2:
-            return createImageWithTitleSubtitleRow(tableView, indexPath: indexPath)
+            return createInputDateRow(tableView, indexPath: indexPath)
         case 3:
             return createImageWithButtonRow(tableView, indexPath: indexPath)
         case 4:
@@ -34,7 +39,7 @@ private class TableDataSourceExample: NSObject, UITableViewDataSource {
         case 8:
             return createCardWithTitleButtonRow(tableView, indexPath: indexPath)
         case 9:
-            return createInputRow(tableView, indexPath: indexPath)
+            return createInputCardRow(tableView, indexPath: indexPath)
         case 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22:
             return createCardWithTitleButtonRow(tableView, indexPath: indexPath)
         default:
@@ -131,6 +136,60 @@ extension TableDataSourceExample {
             center: .atom(.title("Title", nil)),
             trailing: .atom(.button("Label", { }, nil))
         )
+    }
+    
+    private func createInputCardRow(_ tableView: UITableView, indexPath: IndexPath) -> UITableViewCell {
+        
+        var cardViewProperties = CardImageView.ViewProperties()
+        let cardStyle = CardImageViewStyle(
+            paymentSystem: .Mir,
+            backgroundImage: .ic24CardMirLight)
+        cardStyle.update(viewProperties: &cardViewProperties)
+        
+        var buttonViewProperties = ButtonView.ViewProperties(attributedText: "Label".attributed)
+        let buttonStyle = ButtonViewStyle(
+            context: .action(.contained),
+            state: .default,
+            size: .sizeXS
+        )
+        buttonStyle.update(viewProperties: &buttonViewProperties)
+        
+        var inputViewProperties = InputTextField.ViewProperties()
+        inputViewProperties.keyboardType = .numberPad
+        inputViewProperties.text = "".attributed
+        inputViewProperties.placeholder = "Номер карты".attributed
+        inputViewProperties.delegateAssigningClosure = { [weak self] textView in
+            guard let self else { return }
+            textView.delegate = self.cardNumberFormatter
+        }
+        
+        let row = CreationRowsViewService().createCellRowWithBlocks(
+            tableView: tableView,
+            indexPath: indexPath,
+            leading: .atom(.card(cardViewProperties)),
+            center: .atom(.input(inputViewProperties)),
+            trailing: .atom(.button(buttonViewProperties))
+        )
+        return row
+    }
+    
+    private func createInputDateRow(_ tableView: UITableView, indexPath: IndexPath) -> UITableViewCell {
+        
+        var inputViewProperties = InputTextField.ViewProperties()
+        inputViewProperties.keyboardType = .numberPad
+        inputViewProperties.text = "".attributed
+        inputViewProperties.placeholder = "мм/гг".attributed
+        inputViewProperties.delegateAssigningClosure = { [weak self] textView in
+            guard let self else { return }
+            textView.delegate = self.cardExpirationDateFormatter
+        }
+        
+        let row = CreationRowsViewService().createCellRowWithBlocks(
+            tableView: tableView,
+            indexPath: indexPath,
+            leading: .atom(.input(inputViewProperties))
+        )
+        return row
     }
     
     // MARK: - UITableViewDelegate
