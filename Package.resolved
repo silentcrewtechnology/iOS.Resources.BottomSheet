@@ -1,13 +1,13 @@
 {
-  "originHash" : "b6e57ce3988d7b7d88de196d6c0f7e94eb4b564863d201f3a70a1f5cdb6498ed",
+  "originHash" : "a39010a702ef73fa5a976650bd7c67f2907777b7efb3ae71d4f154277cfa4ad3",
   "pins" : [
     {
       "identity" : "ios-architecture-table",
       "kind" : "remoteSourceControl",
       "location" : "https://gitlab.akbars.tech/abo/ios-architecture-table",
       "state" : {
-        "revision" : "5a27f9eaec7411e39ad06ff0458455f22ac95e6d",
-        "version" : "1.2.0"
+        "revision" : "7bf257af19b27aea082ed1ece77b9e5a96e69aa7",
+        "version" : "2.0.2"
       }
     },
     {
@@ -42,8 +42,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://gitlab.akbars.tech/abo/ios-resources-ui-components.git",
       "state" : {
-        "revision" : "1e2b443793459406852ac09227d21f188ce18f67",
-        "version" : "3.4.0"
+        "revision" : "526f79b9486d77ee66ee330e0257891f9fc8ebe7",
+        "version" : "4.0.0"
+      }
+    },
+    {
+      "identity" : "ios-services",
+      "kind" : "remoteSourceControl",
+      "location" : "https://gitlab.akbars.tech/abo/ios-services",
+      "state" : {
+        "revision" : "ab1921ef6acf176f46b99f27383ce3d4158aee7a",
+        "version" : "0.2.1"
       }
     },
     {
@@ -60,8 +69,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://gitlab.akbars.tech/abo/ios.designsystem",
       "state" : {
-        "revision" : "9564e9ce7dea175507ec60b79a174a757ad3d40b",
-        "version" : "3.3.0"
+        "revision" : "dbc921accf253721677d3bfb490415fa2cd37da2",
+        "version" : "4.0.1"
+      }
+    },
+    {
+      "identity" : "kingfisher",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/onevcat/Kingfisher",
+      "state" : {
+        "revision" : "5b92f029fab2cce44386d28588098b5be0824ef5",
+        "version" : "7.11.0"
       }
     },
     {
