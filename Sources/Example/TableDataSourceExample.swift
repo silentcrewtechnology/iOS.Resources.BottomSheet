@@ -23,7 +23,7 @@ private class TableDataSourceExample: NSObject, UITableViewDataSource {
         case 0:
             return createTitleRow(tableView, indexPath: indexPath)
         case 1:
-            return return createInputCardRow(tableView, indexPath: indexPath)
+            return createInputCardRow(tableView, indexPath: indexPath)
         case 2:
             return createInputDateRow(tableView, indexPath: indexPath)
         case 3:
