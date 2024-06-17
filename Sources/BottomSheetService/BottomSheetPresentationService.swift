@@ -109,6 +109,10 @@ public final class BottomSheetPresentationService: NSObject {
         presentingViewController?.present(bottomSheetVC, animated: true, completion: nil)
     }
     
+    public func dismiss(completion: (() -> Void)? = nil) {
+        bottomSheetVC.dismiss(animated: true, completion: completion)
+    }
+    
     private func isNeedTableScrollEnabled(with keyboardHeight: CGFloat = 0) -> Bool {
         return UIScreen.main.bounds.height < ((tableView?.contentSize.height ?? 0) + headerViewHeight + keyboardHeight)
     }
