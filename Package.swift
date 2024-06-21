@@ -27,8 +27,5 @@ let package = Package(
                 .product(name: "Services", package: "ios-services")
             ]
         ),
-        .testTarget(
-            name: "BottomSheetServiceTests",
-            dependencies: ["BottomSheetService"]),
     ]
 )
