@@ -15,7 +15,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://gitlab.akbars.tech/abo/ios.designsystem", exact: "4.0.3"),
-        .package(url: "https://gitlab.akbars.tech/abo/ios-architecture-table", exact: "2.3.0"),
+        .package(url: "https://gitlab.akbars.tech/abo/ios-architecture-table", exact: "4.0.0"),
         .package(url: "https://gitlab.akbars.tech/abo/ios-services", exact: "0.3.0")
     ],
     targets: [
