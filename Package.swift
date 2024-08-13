@@ -14,9 +14,9 @@ let package = Package(
             targets: ["BottomSheetService"]),
     ],
     dependencies: [
-        .package(url: "https://gitlab.akbars.tech/abo/ios.designsystem", exact: "4.0.3"),
-        .package(url: "https://gitlab.akbars.tech/abo/ios-architecture-table", exact: "4.0.0"),
-        .package(url: "https://gitlab.akbars.tech/abo/ios-services", exact: "0.3.0")
+        .package(url: "https://gitlab.akbars.tech/abo/ios.designsystem", .upToNextMajor(from: "8.0.0")),
+        .package(url: "https://gitlab.akbars.tech/abo/ios-architecture-table", .upToNextMajor(from: "8.0.0")),
+        .package(url: "https://gitlab.akbars.tech/abo/ios-services", .upToNextMajor(from: "0.3.0"))
     ],
     targets: [
         .target(
