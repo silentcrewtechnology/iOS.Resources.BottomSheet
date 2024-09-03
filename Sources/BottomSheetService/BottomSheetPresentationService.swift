@@ -1,6 +1,7 @@
 import UIKit
 import DesignSystem
 import ArchitectureTableView
+import Router
 
 public final class BottomSheetPresentationService: NSObject {
     
@@ -18,6 +19,7 @@ public final class BottomSheetPresentationService: NSObject {
     private var tableViewBackgroundColor: UIColor
     private var bottomSheetBackgroundAlpha: CGFloat
     private var bottomSheetVC: BottomSheetViewController
+    private let routerService: RouterService?
     
     // MARK: - Initialization
     
@@ -39,6 +41,31 @@ public final class BottomSheetPresentationService: NSObject {
         self.headerView = headerView
         self.tableViewBackgroundColor = tableViewBackgroundColor
         self.bottomSheetBackgroundAlpha = bottomSheetBackgroundAlpha
+        self.bottomSheetVC = BottomSheetViewController()
+        self.routerService = nil
+        super.init()
+        setup()
+    }
+    
+    public init(
+        dataSource: UITableViewDataSource,
+        delegate: UITableViewDelegate,
+        headerViewHeight: CGFloat,
+        cornerRadius: CGFloat,
+        headerView: UIView,
+        tableViewBackgroundColor: UIColor,
+        bottomSheetBackgroundAlpha: CGFloat,
+        routerService: RouterService
+    ) {
+        self.presentingViewController = nil
+        self.dataSource = dataSource
+        self.delegate = delegate
+        self.headerViewHeight = headerViewHeight
+        self.cornerRadius = cornerRadius
+        self.headerView = headerView
+        self.tableViewBackgroundColor = tableViewBackgroundColor
+        self.bottomSheetBackgroundAlpha = bottomSheetBackgroundAlpha
+        self.routerService = routerService
         self.bottomSheetVC = BottomSheetViewController()
         super.init()
         setup()
@@ -111,6 +138,20 @@ public final class BottomSheetPresentationService: NSObject {
     
     public func dismiss(completion: (() -> Void)? = nil) {
         bottomSheetVC.dismiss(animated: true, completion: completion)
+    }
+    
+    public func routerPresent() {
+        guard let bottomSheetViewController = bottomSheetViewController else { return  }
+        routerService?.present(
+            with: .viewController(bottomSheetViewController),
+            animation: true,
+            transitionStyle: .coverVertical,
+            presentationStyle: .overFullScreen
+        )
+    }
+    
+    public func routerDismiss(completion: @escaping (() -> Void) = {}) {
+        routerService?.dismiss(animated: true, completion: completion)
     }
     
     private func isNeedTableScrollEnabled(with keyboardHeight: CGFloat = 0) -> Bool {
