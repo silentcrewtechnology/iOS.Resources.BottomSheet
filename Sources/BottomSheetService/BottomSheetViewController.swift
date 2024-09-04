@@ -16,16 +16,18 @@ final class BottomSheetViewController: UIViewController {
         public var clouseGestureYpoint: CGFloat
         public var keyboardWillShowAction: ((CGFloat) -> ())?
         
-        public init(headerView: UIView = UIView(),
-                    headerViewHeight: CGFloat = 0,
-                    contentView: UIView = UIView(),
-                    contentHeight: CGFloat? = nil,
-                    topSafeAreaHeight: CGFloat = 0,
-                    bottomSafeAreaHeight: CGFloat = 0,
-                    cornerRadius: CGFloat = 0,
-                    bottomSafeAreaColor: UIColor = .white,
-                    clouseGestureYpoint: CGFloat = 20,
-                    keyboardWillShowAction: ((CGFloat) -> Void)? = nil) {
+        public init(
+            headerView: UIView = UIView(),
+            headerViewHeight: CGFloat = 0,
+            contentView: UIView = UIView(),
+            contentHeight: CGFloat? = nil,
+            topSafeAreaHeight: CGFloat = 0,
+            bottomSafeAreaHeight: CGFloat = 0,
+            cornerRadius: CGFloat = 0,
+            bottomSafeAreaColor: UIColor = .white,
+            clouseGestureYpoint: CGFloat = 20,
+            keyboardWillShowAction: ((CGFloat) -> Void)? = nil
+        ) {
             self.headerView = headerView
             self.headerViewHeight = headerViewHeight
             self.contentView = contentView

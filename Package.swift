@@ -15,6 +15,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://gitlab.akbars.tech/abo/ios-architecture-table", .upToNextMajor(from: "24.0.0")),
+        .package(url: "https://gitlab.akbars.tech/abo/ios-service-routing", .upToNextMajor(from: "0.0.1")),
         .package(url: "https://gitlab.akbars.tech/abo/ios-services", .upToNextMajor(from: "0.3.0"))
     ],
     targets: [
@@ -22,6 +23,7 @@ let package = Package(
             name: "BottomSheetService",
             dependencies: [
                 .product(name: "ArchitectureTableView", package: "ios-architecture-table"),
+                .product(name: "Router", package: "ios-service-routing"),
                 .product(name: "Services", package: "ios-services")
             ]
         ),
