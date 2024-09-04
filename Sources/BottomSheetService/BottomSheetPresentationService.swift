@@ -21,6 +21,11 @@ public final class BottomSheetPresentationService: NSObject {
     private var bottomSheetVC: BottomSheetViewController
     private let routerService: RouterService?
     
+    private var isBottomSheetOpen: Bool = false
+    
+    // Очередь для управления синхронизацией
+    private let queue = DispatchQueue(label: "bottomsheet.queue", attributes: .concurrent)
+    
     // MARK: - Initialization
     
     public init(
@@ -133,11 +138,29 @@ public final class BottomSheetPresentationService: NSObject {
     // MARK: - Public Methods
     
     public func present() {
-        presentingViewController?.present(bottomSheetVC, animated: true, completion: nil)
+        queue.async(flags: .barrier) { [weak self] in
+            guard let self = self else { return }
+            if !self.isBottomSheetOpen {
+                DispatchQueue.main.async {
+                    self.presentingViewController?.present(self.bottomSheetVC, animated: true, completion: nil)
+                    self.isBottomSheetOpen = true
+                }
+            }
+        }
     }
     
     public func dismiss(completion: (() -> Void)? = nil) {
-        bottomSheetVC.dismiss(animated: true, completion: completion)
+        queue.async(flags: .barrier) { [weak self] in
+            guard let self = self else { return }
+            if self.isBottomSheetOpen {
+                DispatchQueue.main.async {
+                    self.bottomSheetVC.dismiss(animated: true, completion: {
+                        self.isBottomSheetOpen = false
+                        completion?()
+                    })
+                }
+            }
+        }
     }
     
     public func routerPresent() {
