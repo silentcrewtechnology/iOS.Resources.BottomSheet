@@ -6,16 +6,14 @@ import Router
 public final class BottomSheetPresentationService: NSObject {
     
     // MARK: - Properties
-    
     private weak var presentingViewController: UIViewController?
-    private var bottomSheetViewController: BottomSheetViewController?
     private var activeTextField: UITextField?
     private var dataSource: UITableViewDataSource
     private var delegate: UITableViewDelegate
     private var headerViewHeight: CGFloat
     private var cornerRadius: CGFloat
     private var headerView: UIView
-    private var tableView: TableView?
+    private var tableViewBuilder: TableViewBuilder?
     private var tableViewBackgroundColor: UIColor
     private var bottomSheetBackgroundAlpha: CGFloat
     private var bottomSheetVC: BottomSheetViewController
@@ -27,16 +25,19 @@ public final class BottomSheetPresentationService: NSObject {
     private let queue = DispatchQueue(label: "bottomsheet.queue", attributes: .concurrent)
     
     // MARK: - Initialization
-    
     public init(
-        presentingViewController: UIViewController,
+        // TODO: перевести на единый роутинг сервис PCABO3-11543
+        presentingViewController: UIViewController? = nil,
         dataSource: UITableViewDataSource,
         delegate: UITableViewDelegate,
         headerViewHeight: CGFloat,
         cornerRadius: CGFloat,
         headerView: UIView,
         tableViewBackgroundColor: UIColor,
-        bottomSheetBackgroundAlpha: CGFloat
+        bottomSheetBackgroundAlpha: CGFloat,
+        bottomSheetVC: BottomSheetViewController = BottomSheetViewController(),
+        // TODO: перевести на единый роутинг сервис PCABO3-11543
+        routerService: RouterService? = nil
     ) {
         self.presentingViewController = presentingViewController
         self.dataSource = dataSource
@@ -46,59 +47,51 @@ public final class BottomSheetPresentationService: NSObject {
         self.headerView = headerView
         self.tableViewBackgroundColor = tableViewBackgroundColor
         self.bottomSheetBackgroundAlpha = bottomSheetBackgroundAlpha
-        self.bottomSheetVC = BottomSheetViewController()
-        self.routerService = nil
-        super.init()
-        setup()
-    }
-    
-    public init(
-        dataSource: UITableViewDataSource,
-        delegate: UITableViewDelegate,
-        headerViewHeight: CGFloat,
-        cornerRadius: CGFloat,
-        headerView: UIView,
-        tableViewBackgroundColor: UIColor,
-        bottomSheetBackgroundAlpha: CGFloat,
-        routerService: RouterService
-    ) {
-        self.presentingViewController = nil
-        self.dataSource = dataSource
-        self.delegate = delegate
-        self.headerViewHeight = headerViewHeight
-        self.cornerRadius = cornerRadius
-        self.headerView = headerView
-        self.tableViewBackgroundColor = tableViewBackgroundColor
-        self.bottomSheetBackgroundAlpha = bottomSheetBackgroundAlpha
+        self.bottomSheetVC = bottomSheetVC
+        tableViewBuilder = .init(with: .init(
+            backgroundColor: .white,
+            dataSources: dataSource,
+            delegate: delegate
+        ))
         self.routerService = routerService
-        self.bottomSheetVC = BottomSheetViewController()
         super.init()
         setup()
     }
     
     private func setup() {
-        setupTableView()
         configureTextFieldsDelegate()
-        updateTableView()
-        setupBottomSheetVC(setupSafeAreaInset())
+        setupScrollEnabled()
+        setupBottomSheetVC()
     }
     
-    private func setupTableView() {
-        tableView = TableView(
-            viewProperties: TableView.ViewProperties(
-                dataSources: dataSource,
-                delegate: delegate),
-            style: .plain)
-    }
-    
-    private func updateTableView() {
-        guard let tableView else { return }
-        tableView.update(with: TableView.ViewProperties(
+    public func updateTable(
+        dataSource: UITableViewDataSource,
+        delegate: UITableViewDelegate
+    ) {
+        tableViewBuilder?.viewUpdater.state = .updateViewProperties(TableView.ViewProperties(
             backgroundColor: tableViewBackgroundColor,
             dataSources: dataSource,
-            delegate: delegate,
-            isScrollEnabled: isNeedTableScrollEnabled()
+            delegate: delegate
         ))
+        
+        tableViewBuilder?.view.isScrollEnabled = isNeedTableScrollEnabled()
+        
+        guard let contentView = tableViewBuilder?.view else { return }
+        let safeAreaInset = setupSafeAreaInset()
+        let viewProperties = BottomSheetViewController.ViewProperties(
+            headerView: headerView,
+            headerViewHeight: headerViewHeight,
+            contentView: contentView,
+            contentHeight: calculateContentHeight(),
+            topSafeAreaHeight: safeAreaInset.top,
+            bottomSafeAreaHeight: safeAreaInset.bottom,
+            cornerRadius: cornerRadius,
+            keyboardWillShowAction: { [weak self] keyboardHeight in
+                self?.tableViewBuilder?.view.isScrollEnabled = self?.isNeedTableScrollEnabled(with: keyboardHeight) ?? false
+            })
+        
+        bottomSheetVC.updateData(with: viewProperties)
+        bottomSheetVC.updateUI(with: viewProperties)
     }
     
     private func setupSafeAreaInset() -> UIEdgeInsets {
@@ -112,31 +105,80 @@ public final class BottomSheetPresentationService: NSObject {
         return safeAreaInset
     }
     
-    private func setupBottomSheetVC(_ safeAreaInset: UIEdgeInsets) {
-        guard let tableView else { return }
-        
+    private func setupBottomSheetVC() {
+        guard let contentView = tableViewBuilder?.view else { return }
+        let safeAreaInset = setupSafeAreaInset()
         let viewProperties = BottomSheetViewController.ViewProperties(
             headerView: headerView,
             headerViewHeight: headerViewHeight,
-            contentView: tableView,
-            contentHeight: tableView.contentSize.height,
+            contentView: contentView,
+            contentHeight: calculateContentHeight(),
             topSafeAreaHeight: safeAreaInset.top,
             bottomSafeAreaHeight: safeAreaInset.bottom,
             cornerRadius: cornerRadius,
             keyboardWillShowAction: { [weak self] keyboardHeight in
-                tableView.isScrollEnabled = self?.isNeedTableScrollEnabled(with: keyboardHeight) ?? false
+                self?.tableViewBuilder?.view.isScrollEnabled = self?.isNeedTableScrollEnabled(with: keyboardHeight) ?? false
             })
         
-        bottomSheetVC.update(with: viewProperties)
+        bottomSheetVC.updateData(with: viewProperties)
+        bottomSheetVC.updateUI(with: viewProperties)
         
         bottomSheetVC.view.backgroundColor = UIColor.black.withAlphaComponent(bottomSheetBackgroundAlpha)
         bottomSheetVC.modalPresentationStyle = .overFullScreen
-        
-        bottomSheetViewController = bottomSheetVC
     }
     
-    // MARK: - Public Methods
+    // MARK: - Private Methods
+    private func setupScrollEnabled(with keyboardHeight: CGFloat = 0) {
+        tableViewBuilder?.view.isScrollEnabled = isNeedTableScrollEnabled(with: keyboardHeight)
+    }
     
+    private func isNeedTableScrollEnabled(with keyboardHeight: CGFloat = 0) -> Bool {
+        let expectedHeight = calculateContentHeight() + keyboardHeight
+        return UIScreen.main.bounds.height < expectedHeight
+    }
+    
+    private func calculateContentHeight() -> CGFloat {
+        let safeAreaInsets = setupSafeAreaInset()
+        let height = safeAreaInsets.top + headerViewHeight + (tableViewBuilder?.view.contentSize.height ?? 0) + safeAreaInsets.bottom
+        return height
+    }
+    
+    private func scrollToActiveTextField() {
+        guard let tableView = bottomSheetVC.view as? TableView,
+              let activeTextField = activeTextField,
+              let indexPath = tableView.indexPathForRow(at: activeTextField.convert(activeTextField.bounds.origin, to: tableView)) else {
+            return
+        }
+        
+        tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
+    }
+    
+    private func configureTextFieldsDelegate() {
+        guard let contentView = tableViewBuilder?.view else { return }
+        for cell in contentView.visibleCells {
+            for subview in cell.contentView.subviews {
+                if let textField = subview as? UITextField {
+                    textField.delegate = self
+                }
+            }
+        }
+    }
+}
+
+extension BottomSheetPresentationService: UITextFieldDelegate {
+    public func textFieldDidBeginEditing(_ textField: UITextField) {
+        activeTextField = textField
+        scrollToActiveTextField()
+    }
+    
+    public func textFieldDidEndEditing(_ textField: UITextField) {
+        activeTextField = nil
+    }
+}
+
+// TODO: перевести на единый роутинг сервис PCABO3-11543
+// MARK: - Routing
+extension BottomSheetPresentationService {
     public func present() {
         queue.async(flags: .barrier) { [weak self] in
             guard let self = self else { return }
@@ -144,6 +186,7 @@ public final class BottomSheetPresentationService: NSObject {
                 DispatchQueue.main.async {
                     self.presentingViewController?.present(self.bottomSheetVC, animated: true, completion: nil)
                     self.isBottomSheetOpen = true
+                    self.updateTable(dataSource: self.dataSource, delegate: self.delegate)
                 }
             }
         }
@@ -164,9 +207,8 @@ public final class BottomSheetPresentationService: NSObject {
     }
     
     public func routerPresent() {
-        guard let bottomSheetViewController = bottomSheetViewController else { return  }
         routerService?.present(
-            with: .viewController(bottomSheetViewController),
+            with: .viewController(bottomSheetVC),
             animation: true,
             transitionStyle: .coverVertical,
             presentationStyle: .overFullScreen
@@ -175,41 +217,5 @@ public final class BottomSheetPresentationService: NSObject {
     
     public func routerDismiss(completion: @escaping (() -> Void) = {}) {
         routerService?.dismiss(animated: true, completion: completion)
-    }
-    
-    private func isNeedTableScrollEnabled(with keyboardHeight: CGFloat = 0) -> Bool {
-        return UIScreen.main.bounds.height < ((tableView?.contentSize.height ?? 0) + headerViewHeight + keyboardHeight)
-    }
-    
-    private func scrollToActiveTextField() {
-        guard let tableView = bottomSheetViewController?.contentView as? TableView,
-              let activeTextField = activeTextField,
-              let indexPath = tableView.indexPathForRow(at: activeTextField.convert(activeTextField.bounds.origin, to: tableView)) else {
-            return
-        }
-        
-        tableView.scrollToRow(at: indexPath, at: .middle, animated: true)
-    }
-    
-    private func configureTextFieldsDelegate() {
-        guard let tableView else { return }
-        for cell in tableView.visibleCells {
-            for subview in cell.contentView.subviews {
-                if let textField = subview as? UITextField {
-                    textField.delegate = self
-                }
-            }
-        }
-    }
-}
-
-extension BottomSheetPresentationService: UITextFieldDelegate {
-    public func textFieldDidBeginEditing(_ textField: UITextField) {
-        activeTextField = textField
-        scrollToActiveTextField()
-    }
-    
-    public func textFieldDidEndEditing(_ textField: UITextField) {
-        activeTextField = nil
     }
 }
