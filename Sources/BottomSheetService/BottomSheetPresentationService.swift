@@ -2,6 +2,7 @@ import UIKit
 import DesignSystem
 import ArchitectureTableView
 import Router
+import AccessibilityIds
 
 public final class BottomSheetPresentationService: NSObject {
     
@@ -86,6 +87,7 @@ public final class BottomSheetPresentationService: NSObject {
             topSafeAreaHeight: safeAreaInset.top,
             bottomSafeAreaHeight: safeAreaInset.bottom,
             cornerRadius: cornerRadius,
+            accessibilityIds: .init(id: PaymentsAccessibilityIDs.HistoryScreen.BottomSheet.id),
             keyboardWillShowAction: { [weak self] keyboardHeight in
                 self?.tableViewBuilder?.view.isScrollEnabled = self?.isNeedTableScrollEnabled(with: keyboardHeight) ?? false
             })
@@ -116,6 +118,7 @@ public final class BottomSheetPresentationService: NSObject {
             topSafeAreaHeight: safeAreaInset.top,
             bottomSafeAreaHeight: safeAreaInset.bottom,
             cornerRadius: cornerRadius,
+            accessibilityIds: .init(id: PaymentsAccessibilityIDs.HistoryScreen.BottomSheet.id),
             keyboardWillShowAction: { [weak self] keyboardHeight in
                 self?.tableViewBuilder?.view.isScrollEnabled = self?.isNeedTableScrollEnabled(with: keyboardHeight) ?? false
             })

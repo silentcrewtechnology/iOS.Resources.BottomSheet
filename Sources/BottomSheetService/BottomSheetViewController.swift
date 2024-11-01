@@ -1,6 +1,7 @@
 import UIKit
 import ArchitectureTableView
 import SnapKit
+import AccessibilityIds
 
 public final class BottomSheetViewController: UIViewController {
     
@@ -15,7 +16,33 @@ public final class BottomSheetViewController: UIViewController {
         public var cornerRadius: CGFloat
         public var bottomSafeAreaColor: UIColor
         public var clouseGestureYpoint: CGFloat
+        public var accessibilityIds: AccessibilityIds?
         public var keyboardWillShowAction: ((CGFloat) -> ())?
+        
+        public struct AccessibilityIds {
+            public var id: String
+            public var containerViewId: String
+            public var headerViewId: String
+            public var contentViewId: String
+            public var keyboardProjectionViewId: String
+            public var bottomSafeAreaViewId: String
+            
+            public init(
+                id: String,
+                containerViewId: String = BottomSheetAccessibilityIDs.BottomSheet.containerViewId,
+                headerViewId: String = BottomSheetAccessibilityIDs.BottomSheet.headerViewId,
+                contentViewId: String = BottomSheetAccessibilityIDs.BottomSheet.contentViewId,
+                keyboardProjectionViewId: String = BottomSheetAccessibilityIDs.BottomSheet.keyboardProjectionViewId,
+                bottomSafeAreaViewId: String = BottomSheetAccessibilityIDs.BottomSheet.bottomSafeAreaViewId
+            ) {
+                self.id = id
+                self.containerViewId = containerViewId
+                self.headerViewId = headerViewId
+                self.contentViewId = contentViewId
+                self.keyboardProjectionViewId = keyboardProjectionViewId
+                self.bottomSafeAreaViewId = bottomSafeAreaViewId
+            }
+        }
         
         public init(
             headerView: UIView = UIView(),
@@ -27,6 +54,7 @@ public final class BottomSheetViewController: UIViewController {
             cornerRadius: CGFloat = 0,
             bottomSafeAreaColor: UIColor = .white,
             clouseGestureYpoint: CGFloat = 20,
+            accessibilityIds: AccessibilityIds? = nil,
             keyboardWillShowAction: ((CGFloat) -> Void)? = nil
         ) {
             self.headerView = headerView
@@ -38,6 +66,7 @@ public final class BottomSheetViewController: UIViewController {
             self.cornerRadius = cornerRadius
             self.bottomSafeAreaColor = bottomSafeAreaColor
             self.clouseGestureYpoint = clouseGestureYpoint
+            self.accessibilityIds = accessibilityIds
             self.keyboardWillShowAction = keyboardWillShowAction
         }
     }
@@ -114,6 +143,7 @@ public final class BottomSheetViewController: UIViewController {
         headerView = viewProperties.headerView
         
         bottomSafeAreaView.backgroundColor = viewProperties.bottomSafeAreaColor
+        setupAccessibilityIds(with: viewProperties)
     }
     
     public func updateUI(with viewProperties: ViewProperties) {
@@ -194,6 +224,21 @@ extension BottomSheetViewController {
         let maskLayer = CAShapeLayer()
         maskLayer.path = maskPath.cgPath
         headerView.layer.mask = maskLayer
+    }
+    
+    private func setupAccessibilityIds(with viewProperties: ViewProperties) {
+        view.isAccessibilityElement = true
+        view.accessibilityIdentifier = viewProperties.accessibilityIds?.id
+        containerView.isAccessibilityElement = true
+        containerView.accessibilityIdentifier = viewProperties.accessibilityIds?.id
+        headerView.isAccessibilityElement = true
+        headerView.accessibilityIdentifier = viewProperties.accessibilityIds?.id
+        contentView.isAccessibilityElement = true
+        contentView.accessibilityIdentifier = viewProperties.accessibilityIds?.id
+        keyboardProjectionView.isAccessibilityElement = true
+        keyboardProjectionView.accessibilityIdentifier = viewProperties.accessibilityIds?.id
+        bottomSafeAreaView.isAccessibilityElement = true
+        bottomSafeAreaView.accessibilityIdentifier = viewProperties.accessibilityIds?.id
     }
 }
 
