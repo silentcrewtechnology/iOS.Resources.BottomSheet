@@ -22,9 +22,9 @@ let package = Package(
         .target(
             name: "BottomSheetService",
             dependencies: [
-                .product(name: "ArchitectureTableView", package: "ios-architecture-table"),
-                .product(name: "Router", package: "ios-service-routing"),
-                .product(name: "Services", package: "ios-services")
+                .product(name: "ArchitectureTableView", package: "iOS.Architecture.Table"),
+                .product(name: "Router", package: "iOS.Service.Routing"),
+                .product(name: "Services", package: "iOS.Services")
             ]
         ),
     ]
