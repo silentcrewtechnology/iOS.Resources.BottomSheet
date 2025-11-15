@@ -14,9 +14,9 @@ let package = Package(
             targets: ["BottomSheetService"]),
     ],
     dependencies: [
-        .package(url: "https://gitlab.akbars.tech/abo/ios-architecture-table.git", .upToNextMajor(from: "24.0.0")),
-        .package(url: "https://gitlab.akbars.tech/abo/ios-service-routing.git", .upToNextMajor(from: "0.0.1")),
-        .package(url: "https://gitlab.akbars.tech/abo/ios-services.git", .upToNextMajor(from: "0.3.0"))
+        .package(url: "https://github.com/silentcrewtechnology/iOS.Architecture.Table.git", .upToNextMajor(from: "1.0.0")),
+        .package(url: "https://github.com/silentcrewtechnology/iOS.Service.Routing.git", .upToNextMajor(from: "1.0.0")),
+        .package(url: "https://github.com/silentcrewtechnology/iOS.Services.git", .upToNextMajor(from: "1.0.0"))
     ],
     targets: [
         .target(
